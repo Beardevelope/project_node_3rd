@@ -8,8 +8,10 @@ const basename = path.basename(__filename);
 const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
+const ProductModel = require('./product');
 
 let sequelize;
+
 if (config.use_env_variable) {
     sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
@@ -20,6 +22,9 @@ if (config.use_env_variable) {
         config,
     );
 }
+
+const Product = ProductModel(sequelize, Sequelize.DataTypes);
+db.Product = Product;
 
 fs.readdirSync(__dirname)
     .filter(file => {

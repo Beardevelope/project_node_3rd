@@ -1,30 +1,33 @@
 const express = require('express');
-const User = require('../models/user.js');
-const Product = require('../models/product.js');
+const { User } = require('../models/user.js');
+const { Product } = require('../models/');
 const SuccessResult = require('../util/success/success.js');
 const ErrorResult = require('../util/error/error.js');
 const { where } = require('sequelize');
+const authMiddleware = require('../middlewares/auth.middle.js');
 
 const router = express.Router();
 
 /**
  * 상품 등록 API
  */
-router.post('/product', async (req, res) => {
+router.post('/product', authMiddleware, async (req, res) => {
     const { product_name, product_description, product_state } = req.body;
 
     if (req.user === undefined || req.user === null) {
         return res.status(400).json(ErrorResult.errorAuthToken());
     }
-
+    console.log(req.user);
     let createResult;
     try {
+        console.log('Before Product.create');
         createResult = await Product.create({
             product_name,
             product_description,
             product_state,
             user_id: req.user,
         });
+        console.log('After Product.create');
     } catch (err) {
         console.log(err);
 
@@ -42,7 +45,7 @@ router.post('/product', async (req, res) => {
 /**
  * 상품 수정 API
  */
-router.patch('/product/:productId', async (req, res) => {
+router.patch('/product/:productId', authMiddleware, async (req, res) => {
     const { productId } = req.params;
     const { product_name, product_description, product_state } = req.body;
 
@@ -84,7 +87,7 @@ router.patch('/product/:productId', async (req, res) => {
 /**
  * 상품 삭제 API
  */
-router.delete('/product/:productId', async (req, res) => {
+router.delete('/product/:productId', authMiddleware, async (req, res) => {
     const { productId } = req.params;
 
     const selectProduct = await Product.findOne({
@@ -163,7 +166,7 @@ router.get('/product/:productId', async (req, res) => {
         include: [
             {
                 model: User,
-                attributes: ['user_name'],
+                attributes: ['product_name'],
             },
         ],
     });

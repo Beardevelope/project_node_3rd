@@ -92,10 +92,11 @@ router.post('/login', async (req, res) => {
         return res.status(400).json(ErrorResult.errorNotEqualPassword());
     }
 
+    console.log(selectUser);
     // jwt 발급
     const token = jwt.sign(
         {
-            userid: selectUser.dataValues.id,
+            userid: selectUser.dataValues.userid,
         },
         process.env.JWT_KEY,
         {

@@ -40,7 +40,8 @@ app.use(express.urlencoded({ extended: true }));
 // console.log(verifyToken);
 
 app.use('/api/auth', authRouter);
-
+app.use('/api', productRouter);
+app.use('/api', userRouter);
 // app.use('/api/users', authMiddleware, userRouter); // authMiddleware를 등록
 // app.use('/api/products', authMiddleware, productRouter); // authMiddleware를 등록
 
